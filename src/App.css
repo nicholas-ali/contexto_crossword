@@ -1,0 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  margin-top: 30px;
+}
+
+.app-container h1 {
+  font-family: Arial, sans-serif;
+  /*font-family: 'Roboto', sans-serif;*/
+  font-weight: 400;
+  font-size: 50px;
+  color: white;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+
+.crossword-board {
+  display: grid;
+  gap: 2px;
+  background-color: black;
+  border: 2px solid black;
+  padding: 2px;
+  margin-bottom: 30px;
+  width: max-content;
+}
+
+.white-square {
+  background-color: white;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 22px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: black;
+  position: relative;
+}
+
+.clue-number {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  font-size: 11px;
+  font-weight: normal;
+  color: #333;
+  line-height: 1;
+}
+
+.cell-letter {
+  /* Keeps the guessed letter perfectly centered */
+  z-index: 1;
+}
+
+.black-square {
+  background-color: black;
+  width: 40px;
+  height: 40px;
+}
+
+.game-layout {
+  display: flex;
+  flex-direction: row;     /* Forces items into a horizontal line */
+  flex-wrap: wrap;
+  justify-content: center; /* Centers the whole game on the screen */
+  align-items: flex-start; /* Aligns the tops of both columns */
+  gap: 50px;               /* Adds a nice 50px gap between the board and the bars */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;          /* --- NEW: Forbids Flexbox from squishing the board --- */
+}
+
+.input-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+input {
+  padding: 12px;
+  font-size: 18px; /* Made it slightly larger for better visibility */
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 300px;
+  text-align: center; /* Centers the text the user is typing */
+  font-weight: bold;
+  text-transform: uppercase;
+  outline: none;
+}
+
+.feedback-section {
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  flex: 1;                 /* Allows the feedback section to stretch out */
+  min-width: 350px;        /* Prevents the bars from getting squished too small */
+  max-width: 500px;
+}
+
+.feedback-section p {
+  margin: 8px 0;
+}
+
+.feedback-text {
+  margin-bottom: 15px;
+  font-weight: bold;
+  color: #333;
+}
+
+.bars-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.score-bar-wrapper {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+
+}
+
+.score-label-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Aligns text to the right, next to the bar */
+  min-width: 65px;
+  margin-right: 10px;
+}
+
+.bar-and-best-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Tells this container to fill the rest of the wrapper's space */
+  gap: 4px; /* Adds a tiny gap between the bar and the text */
+}
+
+.score-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  width: 40px; /* Fixed width keeps all the bars perfectly aligned */
+  flex-shrink: 0;
+  margin-left: 2px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  /*justify-content: flex-start;*/
+}
+
+.best-score {
+  font-size: 11px;
+  color: #777;
+  font-weight: bold;
+  text-align: left; /* Aligns the text with the left edge of the bar */
+  margin-left: 10px;
+  white-space: nowrap;
+  /*margin-top: 2px;*/
+}
+
+.score-bar-bg {
+  position: relative; /* CRITICAL: Traps the absolute bars inside this box */
+  width: 100%;
+  height: 28px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden; /* Keeps the square bars inside the rounded corners */
+  display: flex;
+  align-items: center;
+}
+
+.best-bar-fill {
+  position: absolute;
+  border-radius: 4px;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #b8b8b8; /* Dark grey */
+  z-index: 1; /* Sits on the bottom layer */
+  transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.3s;
+}
+
+.score-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  /* This creates a smooth sliding animation when the width changes */
+  transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.3s;
+  z-index: 2;
+}
+
+.score-value {
+  position: absolute;
+  right: 5px;
+  z-index: 3; /* Sits on the very top so it never gets covered up! */
+  color: #333; /* White text usually looks best over dark grey/colors */
+  font-weight: 550;
+  /*text-shadow: 1px 1px 2px rgba(0,0,0,0.4);*/
+}
+
+.best-score-track {
+  display: flex;
+  justify-content: flex-end; /* Shoves the text to the absolute right edge of the track */
+  min-width: 60px; /* Prevents the text from squishing if the bar is tiny */
+}
