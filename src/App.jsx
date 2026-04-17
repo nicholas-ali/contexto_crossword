@@ -31,7 +31,7 @@ const cluePlacements = {
     "5A": { row: 6, col: 0, direction: "across" },
     "5D": { row: 6, col: 0, direction: "down" },
     "6A": { row: 6, col: 6, direction: "across" },
-    "7A": { row: 9, col: 0, direction: "across" }
+    "7A": { row: 10, col: 0, direction: "across" }
 
 
 }
