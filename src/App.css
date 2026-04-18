@@ -118,9 +118,11 @@ input {
 }
 
 .feedback-text {
-  margin-bottom: 15px;
+  font-size: 1.1rem;
   font-weight: bold;
   color: #333;
+  text-align: center;
+  margin: 0 0 15px 0; /* Keeps the spacing consistent before the bars appear */
 }
 
 .bars-container {
@@ -220,4 +222,40 @@ input {
   display: flex;
   justify-content: flex-end; /* Shoves the text to the absolute right edge of the track */
   min-width: 60px; /* Prevents the text from squishing if the bar is tiny */
+}
+
+.history-navigation-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px; /* Gives a little breathing room before the bars start */
+}
+
+.nav-word-small {
+  font-size: 1.1rem; /* Shrunk back down to your original feedback text size */
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  min-width: 120px; /* Keeps arrows from bouncing around */
+}
+
+.nav-btn-small {
+  background: none;
+  border: none;
+  font-size: 1rem; /* Smaller arrows */
+  cursor: pointer;
+  color: #555;
+  padding: 4px 10px; /* Tighter padding so it doesn't take up vertical space */
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.nav-btn-small:hover:not(:disabled) {
+  background-color: #e2e8f0;
+}
+
+.nav-btn-small:disabled {
+  color: #cbd5e1;
+  cursor: not-allowed;
 }

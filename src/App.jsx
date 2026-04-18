@@ -59,6 +59,9 @@ function App() {
     const [scores, setScores] = useState([])
     const[bests, setBests] = useState([])
 
+    const [history, setHistory] = useState([]);
+    const [historyIndex, setHistoryIndex] = useState(0);
+
     // This function runs when the user clicks the submit button
     const handleSubmit = async () => {
         if (!guess.trim()) return;
@@ -97,7 +100,11 @@ function App() {
 
             if (data.scores) {
                 setScores(data.scores);
-
+                setHistory((prevHistory) => [
+                      { word: guess, scores: data.scores },
+                      ...prevHistory
+                    ]);
+                setHistoryIndex(0);
                 setBests(prevBests => {
                     const newBests = [...prevBests];
 
@@ -179,7 +186,13 @@ function App() {
                         <input
                             type="text"
                             value={guess}
-                            onChange={(e) => setGuess(e.target.value.toUpperCase())}
+                            onChange={(e) => {
+                                setGuess(e.target.value.toUpperCase());
+                                // --- NEW: Automatically clear the error text when they start typing again ---
+                                if (feedback === 'INVALID GUESS' || feedback.includes("Could not connect")) {
+                                    setFeedback('');
+                                }
+                            }}
                             onKeyDown={handleKeyDown}
                             placeholder="enter guess"
                         />
@@ -190,58 +203,95 @@ function App() {
                 <div
                     className="feedback-section"
                     style={{
-                        visibility: (feedback || (scores && scores.length > 0)) ? 'visible' : 'hidden'
+                        visibility: (feedback || history.length > 0) ? 'visible' : 'hidden'
                     }}
                 >
-                    <p className="feedback-text">{feedback}</p>
+                    {/* Only show the standalone text if it is their very first guess (no history yet) */}
+                    {history.length === 0 && (
+                        <p className="feedback-text">{feedback}</p>
+                    )}
 
-                    {scores && scores.length > 0 && (
-                        <div className="bars-container">
-                            {scores.map((currentRank, index) => {
-                                const clue = CLUES[index];
+                    {/* Once they have history, lock the UI in place */}
+                    {history.length > 0 && (
+                        <>
+                            <div className="history-navigation-top">
+                                <button
+                                    className="nav-btn-small"
+                                    onClick={() => {
+                                        setHistoryIndex(i => i + 1);
+                                        setFeedback(''); // Clear any errors if they click away
+                                    }}
+                                    disabled={historyIndex === history.length - 1 || feedback === 'Checking...'}
+                                    title="Prev"
+                                >
+                                    ◀
+                                </button>
 
-                                // Math for the BEST guess bar (with safeguards in case it's the first guess)
-                                const bestRank = bests[index]?.rank || currentRank;
-                                const bestWord = bests[index]?.word || guess;
+                                <span className="nav-word-small">
+                                    {/* --- UPDATED: Removed the red color style so everything matches perfectly --- */}
+                                    {(feedback === 'Checking...' || feedback === 'INVALID GUESS' || feedback.includes("Could not connect"))
+                                        ? feedback
+                                        : history[historyIndex].word.toUpperCase()}
+                                </span>
 
-                                if (bestRank === 1) {
-                                    return null;
-                                }
+                                <button
+                                    className="nav-btn-small"
+                                    onClick={() => {
+                                        setHistoryIndex(i => i - 1);
+                                        setFeedback(''); // Clear any errors if they click away
+                                    }}
+                                    disabled={historyIndex === 0 || feedback === 'Checking...'}
+                                    title="Next"
+                                >
+                                    ▶
+                                </button>
+                            </div>
 
-                                const fillWidth = Math.max(2, 100 * (1 - (Math.log(currentRank) / Math.log(TOTAL_WORDS))));
-                                const bestFillWidth = Math.max(2, 100 * (1 - (Math.log(bestRank) / Math.log(TOTAL_WORDS))));
+                            <div className="bars-container">
+                                {history[historyIndex].scores.map((currentRank, index) => {
+                                    const clue = CLUES[index];
 
-                                // Your color logic
-                                const barColor = currentRank <= 250 ? '#81cc75' : currentRank <= 2000 ? '#f8b133' : '#eb5449';
+                                    const bestRank = bests[index]?.rank || currentRank;
+                                    const bestWord = bests[index]?.word || history[historyIndex].word;
 
-                                return (
-                                    <div key={clue} className="score-bar-wrapper">
-                                        <span className="score-label">{clue}</span>
+                                    if (bestRank === 1) {
+                                        return null;
+                                    }
 
-                                        <div className="bar-and-best-container">
-                                            <div className="score-bar-bg">
-                                                <div
-                                                    className="best-bar-fill"
-                                                    style={{ width: `${bestFillWidth}%` }}
-                                                ></div>
-                                                <div
-                                                    className="score-bar-fill"
-                                                    style={{
-                                                        width: `${fillWidth}%`,
-                                                        backgroundColor: barColor
-                                                    }}
-                                                ></div>
-                                                <span className="score-value">{currentRank}</span>
-                                            </div>
+                                    const fillWidth = Math.max(2, 100 * (1 - (Math.log(currentRank) / Math.log(TOTAL_WORDS))));
+                                    const bestFillWidth = Math.max(2, 100 * (1 - (Math.log(bestRank) / Math.log(TOTAL_WORDS))));
 
-                                            <div className="best-score-track" style={{ width: `${bestFillWidth}%` }}>
-                                                <span className="best-score">{bestWord}</span>
+                                    const barColor = currentRank <= 250 ? '#81cc75' : currentRank <= 2000 ? '#f8b133' : '#eb5449';
+
+                                    return (
+                                        <div key={clue} className="score-bar-wrapper">
+                                            <span className="score-label">{clue}</span>
+
+                                            <div className="bar-and-best-container">
+                                                <div className="score-bar-bg">
+                                                    <div
+                                                        className="best-bar-fill"
+                                                        style={{ width: `${bestFillWidth}%` }}
+                                                    ></div>
+                                                    <div
+                                                        className="score-bar-fill"
+                                                        style={{
+                                                            width: `${fillWidth}%`,
+                                                            backgroundColor: barColor
+                                                        }}
+                                                    ></div>
+                                                    <span className="score-value">{currentRank}</span>
+                                                </div>
+
+                                                <div className="best-score-track" style={{ width: `${bestFillWidth}%` }}>
+                                                    <span className="best-score">{bestWord}</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )
-                            })}
-                        </div>
+                                    )
+                                })}
+                            </div>
+                        </>
                     )}
                 </div>
             </div>
