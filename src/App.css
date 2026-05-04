@@ -42,6 +42,10 @@
   position: relative;
 }
 
+.white-square.highlight-red {
+    background-color: #ccffd6 !important;
+}
+
 .clue-number {
   position: absolute;
   top: 2px;

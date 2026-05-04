@@ -1,39 +1,39 @@
 import { useState } from 'react'
 import './App.css'
 
-const CLUES = ["1A", "1D", "2D", "3A", "3D", "4A", "5A", "5D", "6A", "7A"];
+const CLUES = ["1A", "2D", "3D", "4A", "5D", "6A", "7D", "8A", "9D", "10A"];
+const RED_SQUARES = ["0-0", "3-4", "12-7", "11-12", "6-2", "8-4", "7-9", "5-8"];
 const TOTAL_WORDS = 288751;
 
 
 const initialBoard = [
-    [null,null,null,null,null,null,'','','','',null,null,null,],
-    [null,null,null,null,null,null,'',null,'',null,null,null,null,],
-    [null,null,null,'','','','',null,'',null,null,null,null,],
-    [null,null,null,'',null,null,'',null,'','','','','',],
-    [null,null,null,'',null,null,'',null,null,null,null,null,null,],
-    [null,null,null,'',null,null,'',null,null,null,null,null,null,],
-    ['','','','',null,null,'','','',null,null,null,null,],
-    ['',null,null,null,null,null,'',null,null,null,null,null,null,],
-    ['',null,null,null,null,null,null,null,null,null,null,null,null,],
-    ['',null,null,null,null,null,null,null,null,null,null,null,null,],
-    ['','','','','','','','',null,null,null,null,null,],
-    ['',null,null,null,null,null,null,null,null,null,null,null,null,]
-]
+    ['',  '',  '',  '',  '',  null, null, null, null, null, null, null, null],
+    [null, null, null, null, '',  null, null, null, null, null, null, null, null],
+    [null, null, null, null, '',  null, null, null, null, null, null, null, null],
+    [null, null, null, null, '',  null, null, null, null, null, null, null, null],
+    [null, null, null,  null, '',  null, null, null, null, null, null, null, null],
+    [null, null, null,  null, '',  '',  '',  '',  '',  '',  null, null, null],
+    [null, null, '',  null, null, null, null, null, null, '',  null, null, null],
+    [null, null, '',  null, null, null, null, null, null, '',  null, null, null],
+    [null, null, '',  '',  '',  '',  '',  null, null, '',  null, null, null],
+    [null, null, '', null, null, null, '',  null, null, '',  '',  '',  '' ],
+    [null, null, '', null, null, null, '',  null, null, null, null, null, '' ],
+    [null, null, null, null, null, null, '',  null, null, null, null, null, '' ],
+    [null, null, null, null, null, null, '',  '',  '',  '',  '',  '',  '' ]
+];
 
 // The Map: React still needs this to know where to put the correct words!
 const cluePlacements = {
-    "1A": { row: 0, col: 6, direction: "across" },
-    "1D": { row: 0, col: 6, direction: "down" },
-    "2D": { row: 0, col: 8, direction: "down" },
-    "3A": { row: 2, col: 3, direction: "across" },
-    "3D": { row: 2, col: 3, direction: "down" },
-    "4A": { row: 3, col: 8, direction: "across" },
-    "5A": { row: 6, col: 0, direction: "across" },
-    "5D": { row: 6, col: 0, direction: "down" },
-    "6A": { row: 6, col: 6, direction: "across" },
-    "7A": { row: 10, col: 0, direction: "across" }
-
-
+    "1A":  { row: 0,  col: 0,  direction: "across" },
+    "2D":  { row: 0,  col: 4,  direction: "down" },
+    "3D":  { row: 6,  col: 2,  direction: "down" },
+    "4A":  { row: 5,  col: 4,  direction: "across" },
+    "5D":  { row: 5,  col: 9,  direction: "down" },
+    "6A":  { row: 8,  col: 2,  direction: "across" },
+    "7D":  { row: 8,  col: 6,  direction: "down" },
+    "8A":  { row: 9,  col: 9,  direction: "across" },
+    "9D":  { row: 9,  col: 12, direction: "down" },
+    "10A": { row: 12, col: 6,  direction: "across" }
 }
 
 const getCellNumbers = () => {
@@ -61,6 +61,8 @@ function App() {
 
     const [history, setHistory] = useState([]);
     const [historyIndex, setHistoryIndex] = useState(0);
+
+    const isBoardFull = grid.flat().every(cell => cell !== '');
 
     // This function runs when the user clicks the submit button
     const handleSubmit = async () => {
@@ -170,15 +172,18 @@ function App() {
 
                                 const cellKey = `${rowIndex}-${colIndex}`
 
+                                const shouldBeRed = isBoardFull && RED_SQUARES.includes(cellKey);
+                                const squareClass = shouldBeRed ? "white-square highlight-red" : "white-square";
+
                                 return (
-                                    <div key={cellKey} className="white-square">
+                                    <div key={cellKey} className={squareClass}>
                                         {cellNumbers[cellKey] && (
                                             <span className="clue-number">{cellNumbers[cellKey]}</span>
                                         )}
                                         <span className="cell-letter">{cell}</span>
                                     </div>
                                 )
-                            })
+                                                        })
                         ))}
                     </div>
 
